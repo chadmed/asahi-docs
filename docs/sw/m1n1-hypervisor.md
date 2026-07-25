@@ -2,12 +2,19 @@
 title: m1n1 Hypervisor
 ---
 
-!!! warning
-    The m1n1 hypervisor targets macOS Ventura 13.5. Running later versions of macOS under the m1n1 hypervisor is not supported.
-
 # Running macOS under the m1n1 hypervisor
 
 You can run either a development kernel obtained from Apple, in which case you will have debug symbols, or use the stock kernel found in a macOS install.
+
+## Supported macOS versions
+As Apple make no ABI compatibility guarantees across versions, we cannot and will not support every single macOS
+version either as reverse engineering targets or as guests of the hypervisor. Currently supported targets are:
+
+- macOS 13.5 (M1 and M2 series)
+- macOS 14.8.3 (M1-M3 series)
+
+Due to numerous bugs and the requirement for SPTM to be running to boot XNU, we have not yet pinned a target for
+M4 and newer machines.
 
 ## Preparation
 
