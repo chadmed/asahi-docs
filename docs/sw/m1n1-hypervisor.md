@@ -155,24 +155,31 @@ of m1n1 from the working tree before attempting to use the hypervisor to ensure 
 python3 proxyclient/tools/chainload.py build/m1n1.macho
 ```
 
-## Using GDB/LLDB
+## Using a debugger
+m1n1 supports networked debugging. Running `gdbserver` in the hypervisor shell will start a debug
+server implementation that can be connected to from GDB or LLDB. We recommend using LLDB, as it
+has better support for Mach-O, pointer authentication, and XNU's use of dyld.
 
-`gdbserver` command starts the server implementation that can be connected to GDB or LLDB. LLDB is more recommended because it supports pointer authentication and Darwin kernel dyld.
-
-You need to load kernel extensions to get symbols on LLDB. The below shell script generates `target.lldb`, a convenient LLDB script that sets the target and loads kernel extensions:
-
+An LLDB script is needed to load symbols for all kernel extensions. The shell script below
+can be used from macOS to generate an LLDB script which will do this for you:
 ```sh
-echo target create -s kernel.development.t8101.dSYM kernel.development.t8101 > target.lldb
-for k in $(find Extensions); do [ "$(file -b --mime-type $k)" != application/x-mach-binary ] || printf 'image add %q\n' $k; done >> target.lldb
+echo 'target create -s kernel.development.t8103.dSYM kernel.development.t8103' > target.lldb
+for k in $(find Extensions); do
+    [ "$(file -b --mime-type $k)" != 'application/x-mach-binary' ] || printf 'image add %q\n' $k;
+done >> target.lldb
 ```
 
-The following commands for LLDB loads the generated script and connects to m1n1:
+The above assumes that you are booted on macOS and inside the KDK `Kernels` directory.
+
+From LLDB, you can then run the generated script and connect to m1n1's debug server:
 ```
 command source -e false target.lldb
 process connect unix-connect:///tmp/.m1n1-unix
 ```
 
-Do not run hypervisor console commands interfering with GDB/LLDB, or they will be out-of-sync. For example, do not edit breakpoints from both of hypervisor console and GDB/LLDB at the same time.
+Do not attempt to use both the hypervisor shell's builtin debugging features and an external
+debugger at the same time. For example, do not attempt to add or edit breakpoints from the hypervisor
+shell while using LLDB.
 
 # Sources
 Source for the kernelcache creation: [https://kernelshaman.blogspot.com/2021/02/building-xnu-for-macos-112-intel-apple.html](https://kernelshaman.blogspot.com/2021/02/building-xnu-for-macos-112-intel-apple.html)
