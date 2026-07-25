@@ -147,13 +147,13 @@ python3 proxyclient/tools/run_guest.py \
 
 The above example will preload the DCP tracer and start it as soon as m1n1 is ready to jump to XNU.
 
-## Updating your m1n1 hypervisor tree
-
-The hypervisor/m1n1 ABI is *not* stable. If you have installed a fresh m1n1 build as above, you can use `run_guest.py` directly to save some time. However, as soon as you update your m1n1 git tree, you *must* build the updated m1n1 and run  
+## m1n1 ABI synchronisation
+m1n1's ABI is not stable, and resources inside the source tree (e.g. `proxyclient`) are never guaranteed
+to be backward-compatible with older m1n1 builds. It is expected that you will always chainload a build
+of m1n1 from the working tree before attempting to use the hypervisor to ensure ABI compatibility:
+```sh
+python3 proxyclient/tools/chainload.py build/m1n1.macho
 ```
-python tools/chainload.py -r ../build/m1n1.bin
-```
-before `run_guest.py`, to make sure the ABI is synced. Failure to do this will lead to random errors/crashes due to ABI mismatches.
 
 ## Using GDB/LLDB
 
