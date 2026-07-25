@@ -17,43 +17,44 @@ Due to numerous bugs and the requirement for SPTM to be running to boot XNU, we 
 M4 and newer machines.
 
 ## Preparation
+While it is possible to non-destructively override the boot object of your main macOS install,
+this approach is not recommended. Byond the increased risk of data loss, it also makes it difficult
+to target specific macOS versions without constantly having to DFU restore the entire machine. We instead
+install a second copy of macOS.
 
-You can use either your existing macOS install, or alternatively install a second copy of macOS.
-
-To install a second copy of macOS you will need to complete a couple of steps:
-
-1. Create a second Volume on your macOS partition:  
+1. Create a second Volume on your macOS partition:
 
         diskutil apfs addVolume disk4 APFS macOSTest -mountpoint /Volumes/macOSTest
 
     Change disk4 and volume name (i.e `macOSTest`) for your particular system/preferences.  
-    _Note: Don't make this a system role or it will mess with your existing system (no valid users in 1TR)_.  
+    _Note: Don't make this a system role or it will mess with your existing system (no valid users in 1TR)_.
 
-2. Download and install macOS. To download a specific version of macOS installer you can use the command:  
+2. Download and install macOS. To download a specific version of macOS installer you can use the command:
 
-        softwareupdate --fetch-full-installer --full-installer-version 12.3
+        softwareupdate --fetch-full-installer --full-installer-version 14.8.3
 
-    Substitute `12.3` for whichever version you require. The installer will be found in the Applications folder. Copy it out of here if you want to save it, otherwise it deletes itself once you have installed once. 
-
-    Unfortunately, Apple's CDN only keeps the full-installer package for a limited number of version, and doesn't have 12.3 anymore. 
-    _Note: we are now at firmware version 13.5, which is available normally. You don't need to install 12.3._
+    Substitute `14.8.3` for whichever version you require. The installer will be found in the Applications folder. Copy
+    it out of here if you want to save it, otherwise it deletes itself once you have installed once.
 
 ### Using archived InstallAssistant.pkg
+Unfortunately, Apple does not keep macOS installers on the CDN indefinitely. If you are unable to retrieve the full installer
+using the above method, you will have to use an archived InstallAssistant.pkg. Known working archives of pertinent InstallAssistant
+versions can be found below:
 
-The Montery 12.3 InstallAssistant.pkg has been archived [here](https://archive.org/details/12.3-21-e-230-release), but trying to install by double-clicking installs an online version of the `Install macOS Monterey.app`, with a file size of about 40MB. When that file is run, it will install the latest version of macOS. However, installing it via the command line appears to do the correct thing:
+| macOS Version | Link                                                                  |
+| ------------- | --------------------------------------------------------------------- |
+| 13.5 Ventura  | [archive.org](https://archive.org/details/install-assistant_20240930) |
+| 14.8.3 Sonoma | [archive.org](https://archive.org/details/install-assistant_20240930) |
 
-        sudo installer -pkg 12.3\ 21E230\ \(Release\).pkg -target /
-
-
-Check that `Install macOS Monterey.app` in the `applications` folder is ~12GB.
-
+Once you have downloaded the InstallAssistant.pkg, run it. It will extract the `Install macOS [version].app` application into
+`/Applications`. Run the installed application and follow the prompts to install macOS into the APFS volume you created earlier.
 
 ## Getting the macOS development kernel and creating the kernelcache
 
 1. Create a macOS developer account (requires an iCloud account).
 2. Download the Mac OS Kernel Debug Kit (KDK) from Apple [here](https://developer.apple.com/download/more/). It should match your Mac OS version.
 3. Install the KDK into Mac OS. The KDK will be installed to `/Library/Developer/KDKs/KDK_<MACOS_VERSION>_<KDK_VERSION>.kdk`
-4. Change to the kernels directory:  
+4. Change to the kernels directory:
 
         cd /Library/Developer/KDKs/KDK_<MACOS_VERSION>_<KDK_VERSION>.kdk/System/Library/Kernels
 
