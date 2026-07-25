@@ -134,14 +134,18 @@ python3 proxyclient/tools/run_guest.py \
 ```
 
 ## Using hypervisor modules
+While it is possible to trace hardware using only the m1n1 shell, this is not ergonomic. Instead,
+m1n1 supports preloading and executing Python scripts. These have full access to m1n1's Python API.
+The primary use for these is building fully-featured, automatic tracers for a given block of hardawre.
+Prior art can be found in `proxyclient/hv/`. These are passed to `run_guest.py` as a module:
+```sh
+python3 proxyclient/tools/run_guest.py \
+    -m proxyclient/hv/trace_dcp.py \
+    path/to/kernelcache.macho \
+    -- "debug=0x14e serial=3 apcie=0xfffffffe -enable-kprintf-spam wdt=-1 clpc=0"
+```
 
-In addition to the builtin shell, the m1n1 hypervisor can preload and execute full Python scripts. These scripts are primarily used to preconfigure the
-hypervisor for tracing a particular piece of hardware. Examples can be found in `proxyclient/hv/` in the m1n1 source tree. These scripts are passed
-in to `run_guest.py`, like so:
-
-        python3 proxyclient/tools/run_guest.py -m proxyclient/hv/trace_dcp.py \
-          <PATH_TO_EXTRACTED_MACHO> \
-          -- "debug=0x14e serial=3 apcie=0xfffffffe -enable-kprintf-spam wdt=-1 clpc=0"
+The above example will preload the DCP tracer and start it as soon as m1n1 is ready to jump to XNU.
 
 ## Updating your m1n1 hypervisor tree
 
