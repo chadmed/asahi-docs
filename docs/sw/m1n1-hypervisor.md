@@ -44,7 +44,7 @@ versions can be found below:
 | macOS Version | Link                                                                  |
 | ------------- | --------------------------------------------------------------------- |
 | 13.5 Ventura  | [archive.org](https://archive.org/details/install-assistant_20240930) |
-| 14.8.3 Sonoma | [archive.org](https://archive.org/details/install-assistant_20240930) |
+| 14.8.3 Sonoma | [archive.org](https://archive.org/details/install-assistant_20250207) |
 
 Once you have downloaded the InstallAssistant.pkg, run it. It will extract the `Install macOS [version].app` application into
 `/Applications`. Run the installed application and follow the prompts to install macOS into the APFS volume you created earlier.
